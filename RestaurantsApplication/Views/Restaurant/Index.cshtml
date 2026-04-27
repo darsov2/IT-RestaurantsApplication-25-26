@@ -1,0 +1,47 @@
+@model IEnumerable<Restaurant>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Index</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Name
+        </th>
+        <th>
+            Address
+        </th>
+        <th>City</th>
+        <th>Country</th>
+        <th>Rating</th>
+    </tr>
+    @* public int Id { get; set; } *@
+    @* public string Name { get; set; } *@
+    @* public string Address { get; set; } *@
+    @* public string City { get; set; } *@
+    @* public string Country { get; set; } *@
+    @* public double Rating { get; set; } *@
+    
+    </thead>
+    <tbody>
+    @foreach (var restaurant in @Model)
+    {
+        <tr>
+            <td>@restaurant.Id</td>
+            <td>@restaurant.Name</td>
+            <td>@restaurant.Address</td>
+            <td>@restaurant.City</td>
+            <td>@restaurant.Country</td>
+            <td>@restaurant.Rating</td>
+        </tr>
+    }
+    </tbody>
+</table>
