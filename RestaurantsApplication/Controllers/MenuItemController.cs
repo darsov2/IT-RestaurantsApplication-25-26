@@ -10,30 +10,23 @@ using RestaurantsApplication.Models;
 
 namespace RestaurantsApplication.Controllers
 {
-    public class RestaurantController : Controller
+    public class MenuItemController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public RestaurantController(ApplicationDbContext context)
+        public MenuItemController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Restaurant
-        public async Task<IActionResult> Index(string? name, string? city, string? country)
+        // GET: MenuItem
+        public async Task<IActionResult> Index()
         {
-            var restaurants = await _context.Restaurants
-                .Where(r => (
-                    (name == null || r.Name.Contains(name)) &&
-                    (city == null || r.City.Contains(city)) &&
-                    (country == null || r.Country.Contains(country))
-                    ))
-                .ToListAsync();
-            
-            return View(restaurants);
+            var applicationDbContext = _context.MenuItems.Include(m => m.Restaurant);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Restaurant/Details/5
+        // GET: MenuItem/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -41,40 +34,48 @@ namespace RestaurantsApplication.Controllers
                 return NotFound();
             }
 
-            var restaurant = await _context.Restaurants
-                .Include(x => x.MenuItems)
+            var menuItem = await _context.MenuItems
+                .Include(m => m.Restaurant)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (restaurant == null)
+            if (menuItem == null)
             {
                 return NotFound();
             }
 
-            return View(restaurant);
+            return View(menuItem);
         }
 
-        // GET: Restaurant/Create
+        // GET: MenuItem/Create
         public IActionResult Create()
         {
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Name");
             return View();
         }
 
-        // POST: Restaurant/Create
+        // POST: MenuItem/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Address,City,Country,Rating")] Restaurant restaurant)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,Image,RestaurantId")] MenuItem menuItem)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(restaurant);
+                _context.Add(menuItem);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(restaurant);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Name", menuItem.RestaurantId);
+            return View(menuItem);
         }
 
-        // GET: Restaurant/Edit/5
+        public async Task<IActionResult> CreateForRestaurant(int? restaurantId)
+        {
+            ViewBag.RestaurantId = restaurantId;
+            return View();
+        }
+
+        // GET: MenuItem/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -82,22 +83,23 @@ namespace RestaurantsApplication.Controllers
                 return NotFound();
             }
 
-            var restaurant = await _context.Restaurants.FindAsync(id);
-            if (restaurant == null)
+            var menuItem = await _context.MenuItems.FindAsync(id);
+            if (menuItem == null)
             {
                 return NotFound();
             }
-            return View(restaurant);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Name", menuItem.RestaurantId);
+            return View(menuItem);
         }
 
-        // POST: Restaurant/Edit/5
+        // POST: MenuItem/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address,City,Country,Rating")] Restaurant restaurant)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,Image,RestaurantId")] MenuItem menuItem)
         {
-            if (id != restaurant.Id)
+            if (id != menuItem.Id)
             {
                 return NotFound();
             }
@@ -106,12 +108,12 @@ namespace RestaurantsApplication.Controllers
             {
                 try
                 {
-                    _context.Update(restaurant);
+                    _context.Update(menuItem);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RestaurantExists(restaurant.Id))
+                    if (!MenuItemExists(menuItem.Id))
                     {
                         return NotFound();
                     }
@@ -122,10 +124,11 @@ namespace RestaurantsApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(restaurant);
+            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Name", menuItem.RestaurantId);
+            return View(menuItem);
         }
 
-        // GET: Restaurant/Delete/5
+        // GET: MenuItem/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,34 +136,35 @@ namespace RestaurantsApplication.Controllers
                 return NotFound();
             }
 
-            var restaurant = await _context.Restaurants
+            var menuItem = await _context.MenuItems
+                .Include(m => m.Restaurant)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (restaurant == null)
+            if (menuItem == null)
             {
                 return NotFound();
             }
 
-            return View(restaurant);
+            return View(menuItem);
         }
 
-        // POST: Restaurant/Delete/5
+        // POST: MenuItem/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var restaurant = await _context.Restaurants.FindAsync(id);
-            if (restaurant != null)
+            var menuItem = await _context.MenuItems.FindAsync(id);
+            if (menuItem != null)
             {
-                _context.Restaurants.Remove(restaurant);
+                _context.MenuItems.Remove(menuItem);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RestaurantExists(int id)
+        private bool MenuItemExists(int id)
         {
-            return _context.Restaurants.Any(e => e.Id == id);
+            return _context.MenuItems.Any(e => e.Id == id);
         }
     }
 }

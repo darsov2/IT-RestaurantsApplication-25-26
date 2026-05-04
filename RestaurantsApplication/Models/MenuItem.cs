@@ -9,5 +9,5 @@ public class MenuItem
     public string Image { get; set; }
     
     public int RestaurantId { get; set; }
-    public Restaurant Restaurant { get; set; }
+    public Restaurant? Restaurant { get; set; }
 }
