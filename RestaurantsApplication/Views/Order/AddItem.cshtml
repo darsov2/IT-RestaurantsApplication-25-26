@@ -1,0 +1,97 @@
+@model Order
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Restaurant Details</h2>
+<dl>
+    <dt>@Html.DisplayNameFor(x => x.Restaurant.Name)</dt>
+    <dd>@Html.DisplayFor(x => x.Restaurant.Name)</dd>
+    <dt>@Html.DisplayNameFor(x => x.Restaurant.Address)</dt>
+    <dd>@Html.DisplayFor(x => x.Restaurant.Address)</dd>
+</dl>
+
+<h3>Order</h3>
+<dl>
+    <dt>@Html.DisplayNameFor(x => x.Id)</dt>
+    <dd>@Html.DisplayFor(x => x.Id)</dd>
+    <dt>@Html.DisplayNameFor(x => x.FullName)</dt>
+    <dd>@Html.DisplayFor(x => x.FullName)</dd>
+</dl>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-8 row">
+            @foreach (var item in Model.Restaurant.MenuItems)
+            {
+                // var quantity = 
+                //     Model.MenuItems.FirstOrDefault(x => x.MenuItemId == item.Id)?.Quantity ?? 0
+
+                var menuItem = Model.MenuItems.FirstOrDefault(x => x.MenuItemId == item.Id);
+
+                var quantity = 0;
+
+                if (menuItem != null)
+                {
+                    quantity = menuItem.Quantity;
+                }
+
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-img-top">
+                                <img width="100px" src="@item.Image"/>
+                            </div>
+                            <div class="card-text">
+                                <div class="card-title">@item.Name</div>
+                                <div>@item.Price</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <form asp-action="DecrementQuantity">
+                                        <input type="hidden" name="orderId" value="@Model.Id"/>
+                                        <input type="hidden" name="menuItemId" value="@item.Id"/>
+                                        <button type="submit" class="btn btn-warning">-</button>
+                                    </form>
+                                </div>
+                                <div class="col-4">
+                                    @quantity
+                                </div>
+                                <div class="col-4">
+                                    <form asp-action="IncrementQuantity">
+                                        <input type="hidden" name="orderId" value="@Model.Id"/>
+                                        <input type="hidden" name="menuItemId" value="@item.Id"/>
+                                        <button type="submit" class="btn btn-success">+</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+        <div class="col-4">
+            @foreach (var item in Model.MenuItems)
+            {
+                <div class="row">
+                    <div class="card row">
+                        <div class="card-body">
+                            <div class="col-4">
+                                @item.MenuItem.Name
+                            </div>
+                            <div class="col-4">
+                                @item.Quantity
+                            </div>
+                            <div class="col-4">
+                                @(item.Quantity * item.MenuItem.Price)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

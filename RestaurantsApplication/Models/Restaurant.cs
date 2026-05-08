@@ -19,5 +19,5 @@ public class Restaurant
     [Range(0, 10)]
     public double Rating { get; set; }
     
-    public ICollection<MenuItem>  MenuItems { get; set; }
+    public ICollection<MenuItem>  MenuItems { get; set; } = new List<MenuItem>();
 }

@@ -40,7 +40,6 @@ namespace RestaurantsApplication.Controllers
             {
                 return NotFound();
             }
-
             var restaurant = await _context.Restaurants
                 .Include(x => x.MenuItems)
                 .FirstOrDefaultAsync(m => m.Id == id);
