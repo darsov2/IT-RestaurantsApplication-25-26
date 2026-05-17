@@ -18,15 +18,15 @@
 <h2>Create Order</h2>
 
 <form asp-action="Create" method="post">
-    <div class="form-control">
-        <label asp-for="@Model.Order.FullName"></label>
-        <input asp-for="@Model.Order.FullName"/>
-    </div>
-    
-    <div class="form-control">
-        <label asp-for="@Model.Order.PhoneNumber"></label>
-        <input asp-for="@Model.Order.PhoneNumber"/>
-    </div>
+    @* <div class="form-control"> *@
+    @*     <label asp-for="@Model.Order.FullName"></label> *@
+    @*     <input asp-for="@Model.Order.FullName"/> *@
+    @* </div> *@
+    @* *@
+    @* <div class="form-control"> *@
+    @*     <label asp-for="@Model.Order.PhoneNumber"></label> *@
+    @*     <input asp-for="@Model.Order.PhoneNumber"/> *@
+    @* </div> *@
     
     <input type="hidden" asp-for="@Model.Order.RestaurantId"/>
     

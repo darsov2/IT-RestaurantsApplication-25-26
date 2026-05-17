@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 namespace RestaurantsApplication.Models;
 
 public class MenuItem
@@ -9,5 +11,6 @@ public class MenuItem
     public string Image { get; set; }
     
     public int RestaurantId { get; set; }
+    [ValidateNever]
     public Restaurant? Restaurant { get; set; }
 }

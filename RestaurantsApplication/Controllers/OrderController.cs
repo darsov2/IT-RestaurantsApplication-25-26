@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +13,7 @@ using RestaurantsApplication.Models.ViewModels;
 
 namespace RestaurantsApplication.Controllers
 {
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,11 +26,15 @@ namespace RestaurantsApplication.Controllers
         // GET: Order
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Orders.Include(o => o.Restaurant);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var applicationDbContext = 
+                _context.Orders.Include(o => o.Restaurant)
+                    .Where(o => o.UserId == userId);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Order/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,6 +44,7 @@ namespace RestaurantsApplication.Controllers
 
             var order = await _context.Orders
                 .Include(o => o.Restaurant)
+                .Include(o => o.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
@@ -82,6 +90,8 @@ namespace RestaurantsApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                order.UserId = id;
                 order.DateCreated = DateTime.Now;
                 _context.Add(order);
                 await _context.SaveChangesAsync();
@@ -96,6 +106,7 @@ namespace RestaurantsApplication.Controllers
             var order = _context.Orders
                 .Include(o => o.Restaurant.MenuItems)
                 .Include(o => o.MenuItems)
+                .Include(o => o.User)
                 .FirstOrDefault(o => o.Id == id);
 
             if (order == null)
@@ -106,6 +117,7 @@ namespace RestaurantsApplication.Controllers
             return View(order);
         }
 
+        [HttpPost]
         public IActionResult DecrementQuantity(int orderId, int menuItemId)
         {
             var existingMenuItem = _context.MenuItemInOrders.FirstOrDefault(m => m.OrderId == orderId && m.MenuItemId == menuItemId);

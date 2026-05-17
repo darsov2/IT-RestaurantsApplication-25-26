@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +24,7 @@ namespace RestaurantsApplication.Controllers
         // GET: Restaurant
         public async Task<IActionResult> Index(string? name, string? city, string? country)
         {
+            var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var restaurants = await _context.Restaurants
                 .Where(r => (
                     (name == null || r.Name.Contains(name)) &&
@@ -52,6 +55,7 @@ namespace RestaurantsApplication.Controllers
         }
 
         // GET: Restaurant/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -62,6 +66,7 @@ namespace RestaurantsApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Name,Address,City,Country,Rating")] Restaurant restaurant)
         {
             if (ModelState.IsValid)
@@ -74,6 +79,7 @@ namespace RestaurantsApplication.Controllers
         }
 
         // GET: Restaurant/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,6 +100,7 @@ namespace RestaurantsApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address,City,Country,Rating")] Restaurant restaurant)
         {
             if (id != restaurant.Id)
@@ -125,6 +132,7 @@ namespace RestaurantsApplication.Controllers
         }
 
         // GET: Restaurant/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -142,9 +150,10 @@ namespace RestaurantsApplication.Controllers
             return View(restaurant);
         }
 
-        // POST: Restaurant/Delete/5
+        // POST: Restaurant/DeleRestate/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var restaurant = await _context.Restaurants.FindAsync(id);
