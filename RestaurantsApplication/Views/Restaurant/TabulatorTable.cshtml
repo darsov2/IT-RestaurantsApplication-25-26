@@ -1,0 +1,46 @@
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Restaurant</h2>
+
+<div id="restaurants-table"></div>
+
+@section Scripts
+{
+    <script>
+
+        var table = new Tabulator("#restaurants-table", {
+            height:"311px",
+            layout:"fitColumns",
+            ajaxURL:"/api/RestaurantApi/paged",
+            pagination: true,
+            paginationMode:"remote",
+            paginationSize: 5,
+            placeholder:"No Data Set",
+            columns:[
+                {title:"Name", field:"name", sorter:"string", width:200},
+                {title:"Address", field:"address", sorter:"number"},
+                {title:"Location", field:"location", sorter:"string"},
+                {title:"Rating", field:"rating", hozAlign:"center", width:100},
+                {title: "Details", field: "id", formatter: function (cell, formatterOptions) {
+                        var values = cell.getValue();
+                        
+                        return `<a href="/Restaurant/Details/${values}">Details</a`;
+                    }}
+            ],
+            dataReceiveParams:{
+                "last_page":"lastPage", //change last_page parameter name to "max_pages"
+            }
+        });
+        
+        // {
+        @* "name": "dsadasd", *@
+        @*     "address": "asdasdasd", *@
+        @*     "location": "City, dsadas", *@
+        @*     "rating": 10 *@
+        @* } *@
+        
+    </script>
+}

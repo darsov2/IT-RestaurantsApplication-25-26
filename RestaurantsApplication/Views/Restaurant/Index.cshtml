@@ -34,7 +34,7 @@
     </div>
     </form>
 </div>
-<table class="table">
+<table id="test-table" class="table">
     <thead>
         <tr>
             <th>
@@ -89,3 +89,11 @@
 }
     </tbody>
 </table>
+
+
+@section Scripts
+{
+    <script>
+        var table = new Tabulator("#test-table", {});
+    </script>
+}

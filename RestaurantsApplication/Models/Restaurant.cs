@@ -18,6 +18,7 @@ public class Restaurant
     public string Country { get; set; }
     [Range(0, 10)]
     public double Rating { get; set; }
+    public string Test { get; set; }
     
     public ICollection<MenuItem>  MenuItems { get; set; } = new List<MenuItem>();
 }

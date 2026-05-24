@@ -1,0 +1,18 @@
+@model RestaurantsApplication.Models.ViewModels.AddUserToRoleViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>title</h2>
+
+<form asp-action="AddUserToRole" method="post">
+    <label>User</label>
+    <select asp-for="UserId" asp-items="@ViewBag.Users"></select>
+    
+    <label>Role</label>
+    <select asp-for="RoleName" asp-items="@ViewBag.Roles"></select>
+    
+    <button type="submit">Submit</button>
+</form>

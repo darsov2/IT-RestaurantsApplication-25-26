@@ -36,6 +36,11 @@ namespace RestaurantsApplication.Controllers
             return View(restaurants);
         }
 
+        public IActionResult RestaurantTabulator()
+        {
+            return View("TabulatorTable");
+        }
+
         // GET: Restaurant/Details/5
         public async Task<IActionResult> Details(int? id)
         {
